@@ -1,6 +1,8 @@
 """
 FIPS 203 - Polynomial Arithmetic
+
 """
+import hmac
 
 N = 256
 Q = 3329
@@ -48,8 +50,19 @@ def polynomial_multiply(a, b):
     return [x % Q for x in result]
 
 
+
 def polynomial_equal(a, b):
     validate_polynomial(a)
     validate_polynomial(b)
 
-    return a == b
+    a_bytes = b"".join(
+        int(x).to_bytes(2, "little")
+        for x in a
+    )
+
+    b_bytes = b"".join(
+        int(x).to_bytes(2, "little")
+        for x in b
+    )
+
+    return hmac.compare_digest(a_bytes, b_bytes)
